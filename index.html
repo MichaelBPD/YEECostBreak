@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quote Calculator</title>
+    <style>
+/* CSS styles for the Quote Calculator */
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2c018;
+    }
+        
+    .container {
+    display: flex;
+    justify-content: center; /* Center the container horizontally */
+    align-items: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 150px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin: 20px auto; /* Center the container horizontally */
+    max-width: 800px; /* Set a maximum width */
+}
+
+    .left-column, .right-column {
+        flex: 1; /* Both columns occupy an equal share of the container */
+        padding: 10px;
+    }
+        
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+        color: #005b90;
+    }
+    
+    form {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+    
+    input[type="number"] {
+        width: 100%; /* Make the input fields span the full width of the container */
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 16px;
+        box-sizing: border-box; /* Include padding and border in the total width */
+    }
+    
+    button {
+        display: block;
+        width: 100%;
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 3px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        color: #005b90;
+    }
+    
+    p {
+        text-align: center;
+        margin-top: 10px;
+        color: #555;
+    }
+    
+    span {
+        font-weight: bold;
+        color: #005b90;
+    }
+    .results-box {
+        max-width: 400px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .results-box p {
+        color: #007bff;
+    }
+        
+    .image {
+        max-width: 100%; /* Make sure the image doesn't exceed its container's width */
+    }
+        
+    .quote-variation {
+        font-weight: bold;
+        color: #005b90; 
+    }
+
+    </style>
+</head>
+<body>
+    <script>
+        // Define the correct password
+        const correctPassword = "8008";
+        const enteredPassword = prompt("Please enter the password:");
+
+        if (enteredPassword === correctPassword) {
+            // Inserting your form and container directly into the body
+            document.body.innerHTML = `
+                 <h1>Price Breakdown Calculator</h1>
+                <form>
+    <label for="cost">Cost:</label>
+    <input type="number" id="cost" placeholder="Enter total cost"><br>
+
+    <label for="materials">Materials:</label>
+    <input type="number" id="materials" placeholder="Enter material cost"><br>
+</form>
+
+
+                <div class="container">
+                    <div class="left-column">
+                        <h2>Breakdown:</h2>
+                        <p>Materials: <span id="materialResult">0.00%</span></p>
+                        <p>Labour: <span id="labourResult">0.00%</span></p>
+                        <p>GST: <span id="gstResult">0.00%</span></p>
+                        <p>Admin: <span id="adminResult">0.00%</span></p>
+                        <p>Includes: Documentation, form 4's, compliance, invoices/receipts etc...</p>
+                        <p>Running: <span id="runningResult">0.00%</span></p>
+                        <p>Includes: Insurance, Licencing, Fuel costs, Warranites etc...</p>
+                    </div>
+                    <div class="right-column">
+                        <img class="image" src="Logo.png" alt="Image">
+                    </div>
+                </div>
+        `;
+        } else {
+            document.body.innerHTML = "<p>Access denied. Incorrect password.</p>";
+        }
+    </script>
+
+<script>
+function calculateBreakdown() {
+    const cost = parseFloat(document.getElementById('cost').value) || 0;
+    const materials = parseFloat(document.getElementById('materials').value) || 0;
+
+    let materialPercentage, labourPercentage, gstPercentage, adminPercentage, runningPercentage;
+
+    if (materials > 0) {
+        materialPercentage = (materials / cost) * 100;
+        const remainingPercentage = 100 - materialPercentage - 10;
+
+        // Proportionally distribute remaining percentages
+        labourPercentage = remainingPercentage * 3/7;
+        gstPercentage = 10;
+        adminPercentage = remainingPercentage * 2/7;
+        runningPercentage = remainingPercentage * 2/7;
+    } else {
+        // Default percentages when no materials are entered
+        materialPercentage = 20;
+        labourPercentage = 30;
+        gstPercentage = 10;
+        adminPercentage = 20;
+        runningPercentage = 20;
+    }
+
+    // Calculate the actual values
+    const materialValue = (materialPercentage / 100) * cost;
+    const labourValue = (labourPercentage / 100) * cost;
+    const gstValue = (gstPercentage / 100) * cost;
+    const adminValue = (adminPercentage / 100) * cost;
+    const runningValue = (runningPercentage / 100) * cost;
+
+    // Format values with commas
+    const formatValue = (value) => value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Update the result elements to display percentage and actual values
+    document.getElementById('materialResult').textContent = materialPercentage.toFixed(2) + '% ($' + formatValue(materialValue) + ')';
+    document.getElementById('labourResult').textContent = labourPercentage.toFixed(2) + '% ($' + formatValue(labourValue) + ')';
+    document.getElementById('gstResult').textContent = gstPercentage.toFixed(2) + '% ($' + formatValue(gstValue) + ')';
+    document.getElementById('adminResult').textContent = adminPercentage.toFixed(2) + '% ($' + formatValue(adminValue) + ')';
+    document.getElementById('runningResult').textContent = runningPercentage.toFixed(2) + '% ($' + formatValue(runningValue) + ')';
+}
+
+// Add event listeners to inputs
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', calculateBreakdown);
+});
+
+</script>
+</body>
+</html>
